@@ -9,7 +9,7 @@ import sys
 
 log = logging.getLogger(__name__)
 
-def esgf_api(limit: int = 100, offset: int = 0, facets: T.List[str] = None, fields: T.List[str] = None, replica=False, **kwargs):
+def esgf_api(limit: int = 100, offset: int = 0, facets: T.List[str] = None, fields: T.List[str] = None, replica=False, latest=True, retracted=False, **kwargs):
     """
     Perform a single ESGF API query
     """

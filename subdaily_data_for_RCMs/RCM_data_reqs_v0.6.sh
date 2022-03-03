@@ -124,12 +124,36 @@ done
 echo "synthesising results"
 
 echo "# Synthesised ESGF search results for ${model}, ${ssps[@]}" > ${synth_res}/synthesised_models.txt
-cat ${final_res}/${model}_*_models_final.txt | sort | uniq -d | grep "^      ${INPUTNUM}" | sort >> ${synth_res}/synthesised_models.txt
-sed -i "s/      ${INPUTNUM}//g" ${synth_res}/synthesised_models.txt
+found_mods=()
+cat ${final_res}/${model}_*_models_final.txt | sort | uniq -d | grep "^      ${INPUTNUM}" | sort >> ${synth_res}/synthesised_models_tmp.txt
+sed -i "s/      ${INPUTNUM} //g" ${synth_res}/synthesised_models_tmp.txt
+while read line ; do
+  found=true
+  for finres in ${final_res}/${model}_*_models_final.txt; do
+    #echo ${INPUTNUM} $line `basename $finres`
+    if ! grep -q "${INPUTNUM} $line" $finres ; then found=false ; fi
+    #echo $found
+  done
+  if $found ; then 
+    echo $line >> ${synth_res}/synthesised_models.txt
+  fi
+done < ${synth_res}/synthesised_models_tmp.txt
+rm -f ${synth_res}/synthesised_models_tmp.txt
 
 echo "# Synthesised ESGF search results for ${model}, ${ssps[@]}" > ${synth_res}/synthesised_ensembles.txt
-cat ${final_res}/${model}_*_ensembles_final.txt | sort | uniq -d | grep "^      ${INPUTNUM}" | sort >> ${synth_res}/synthesised_ensembles.txt
-sed -i "s/      ${INPUTNUM}//g" ${synth_res}/synthesised_ensembles.txt
-
+cat ${final_res}/${model}_*_ensembles_final.txt | sort | uniq -d | grep "^      ${INPUTNUM}" | sort >> ${synth_res}/synthesised_ensembles_tmp.txt
+sed -i "s/      ${INPUTNUM} //g" ${synth_res}/synthesised_ensembles_tmp.txt
+while read line ; do
+  found=true
+  for finres in ${final_res}/${model}_*_ensembles_final.txt; do
+    #echo ${INPUTNUM} $line `basename $finres`
+    if ! grep -q "${INPUTNUM} $line" $finres ; then found=false ; fi
+    #echo $found
+  done
+  if $found ; then 
+    echo $line >> ${synth_res}/synthesised_ensembles.txt
+  fi
+done < ${synth_res}/synthesised_ensembles_tmp.txt
+rm -f ${synth_res}/synthesised_ensembles_tmp.txt
 
 exit
